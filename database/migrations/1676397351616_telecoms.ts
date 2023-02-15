@@ -7,12 +7,13 @@ export default class extends BaseSchema {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id')
 
+      table.string('carrier_link')
       table.string('name')
       table.string('company')
       table.string('country')
       table.string('country_code')
       table.string('carrier_webiste')
-      table.string('carrier_code')
+      table.string('carrier_codes')
       table.string('mobile_prefix')
       table.string('size_of_nsn')
       table.string('number_format')

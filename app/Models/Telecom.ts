@@ -6,6 +6,9 @@ export default class Telecom extends BaseModel {
   public id: number
 
   @column()
+  public carrier_link: string
+
+  @column()
   public name: string
 
   @column()
