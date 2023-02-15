@@ -2,9 +2,9 @@ import { BaseCommand } from '@adonisjs/core/build/standalone'
 var axios = require('axios')
 var cheerio = require('cheerio')
 var path = require('path')
-const readline = require('readline')
-
 import fs from 'fs'
+import getDateDiffrence from './command-utils/getDateDiffrence'
+
 export default class DataTelecom extends BaseCommand {
   public static commandName = 'data:telecom'
 
@@ -32,8 +32,7 @@ export default class DataTelecom extends BaseCommand {
   public async run() {
     const { default: Telecom } = await import('App/Models/Telecom')
     const filePath = path.join(__dirname, 'command-utils', 'links.txt')
-
-    if (fs.existsSync(filePath)) {
+    if (fs.existsSync(filePath) && getDateDiffrence() <= 2) {
       const data = fs.readFileSync(filePath, { encoding: 'utf8', flag: 'r' }).split('\n')
       const rowData = {
         carrier_link: '',
@@ -138,6 +137,11 @@ export default class DataTelecom extends BaseCommand {
         await Telecom.create(rowData)
       }
     } else {
+      if (getDateDiffrence() > 2) {
+        fs.unlink(filePath, (err) => {
+          if (err) throw err
+        })
+      }
       const request = axios.get('https://www.imei.info/carriers/', {
         headers: {
           'User-Agent':
