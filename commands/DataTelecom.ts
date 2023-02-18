@@ -34,6 +34,7 @@ export default class DataTelecom extends BaseCommand {
     const filePath = path.join(__dirname, 'command-utils', 'links.txt')
 
     try {
+      this.logger.info('Command Running!')
       const getCarriersPage = (pageNumber: number = 1) => {
         const request = axios.get(`https://www.imei.info/carriers/?page=${pageNumber}`, {
           headers: {
@@ -181,8 +182,8 @@ export default class DataTelecom extends BaseCommand {
           })
         }
       }
-      const state = fs.existsSync(filePath) && getDateDiffrence() <= 2
 
+      const state = fs.existsSync(filePath) && getDateDiffrence() <= 2
       const fileActionFunctions = {
         true: (filePath, Telecom) => withFileFunction(filePath, Telecom),
         false: (filePath) => withoutFileFunction(filePath),
