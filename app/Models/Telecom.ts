@@ -24,7 +24,7 @@ export default class Telecom extends BaseModel {
   public country_code: string
 
   @column()
-  public carrier_webiste: string
+  public carrier_website: string
 
   @column()
   public carrier_codes: string
