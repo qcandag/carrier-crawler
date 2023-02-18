@@ -15,7 +15,7 @@ https://github.com/qcandag/carrier-crawler.git
 Move into project
 
 ```bash
-cd carrier--crawler
+cd carrier-crawler
 ```
 
 Install packages
