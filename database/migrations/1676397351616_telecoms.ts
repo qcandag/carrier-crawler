@@ -13,7 +13,7 @@ export default class extends BaseSchema {
       table.string('country')
       table.string('country_iso')
       table.string('country_code')
-      table.string('carrier_webiste')
+      table.string('carrier_website')
       table.string('carrier_codes')
       table.string('mobile_prefix')
       table.string('size_of_nsn')
