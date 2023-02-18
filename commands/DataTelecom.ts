@@ -34,7 +34,7 @@ export default class DataTelecom extends BaseCommand {
     const filePath = path.join(__dirname, 'command-utils', 'links.txt')
 
     try {
-      const getCarrier = (pageNumber: number = 1) => {
+      const getCarriersPage = (pageNumber: number = 1) => {
         const request = axios.get(`https://www.imei.info/carriers/?page=${pageNumber}`, {
           headers: {
             'User-Agent':
@@ -46,6 +46,76 @@ export default class DataTelecom extends BaseCommand {
         })
         return request
       }
+      const getCarrier = (url: string) => {
+        const request = axios.get(url, {
+          headers: {
+            'User-Agent':
+              'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36',
+            'Accept': '*/*',
+            'Accept-Encoding': 'gzip, deflate, br',
+            'Connection': 'keep-alive',
+          },
+        })
+        return request
+      }
+      const updateRowData = (rowData, i, text) => {
+        switch (i) {
+          case 0:
+            rowData.name = text
+            break
+          case 1:
+            rowData.company = text
+            break
+          case 2:
+            rowData.country = text
+            break
+          case 3:
+            rowData.country_iso = text
+            break
+          case 4:
+            rowData.country_code = text
+            break
+          case 5:
+            rowData.carrier_website = text
+            break
+          case 6:
+            rowData.carrier_codes = text
+            break
+          case 7:
+            rowData.mobile_prefix = text
+            break
+          case 8:
+            rowData.size_of_nsn = text
+            break
+          case 9:
+            rowData.number_format = text
+            break
+          case 11:
+            rowData.subscribers = text
+            break
+          case 12:
+            rowData.gsm_bands = text
+            break
+          case 13:
+            rowData.gsm_protocols = text
+            break
+          case 14:
+            rowData.umts_bands = text
+            break
+          case 15:
+            rowData.umts_protocols = text
+            break
+          case 16:
+            rowData.lte_bands = text
+            break
+          case 17:
+            rowData.lte_protocols = text
+            break
+          default:
+            break
+        }
+      }
+
       const withFileFunction = async (filePath, Telecom) => {
         const data = fs.readFileSync(filePath, { encoding: 'utf8', flag: 'r' }).split('\n')
         const rowData = {
@@ -53,8 +123,9 @@ export default class DataTelecom extends BaseCommand {
           name: '',
           company: '',
           country: '',
+          country_iso: '',
           country_code: '',
-          carrier_webiste: '',
+          carrier_website: '',
           carrier_codes: '',
           mobile_prefix: '',
           size_of_nsn: '',
@@ -68,74 +139,18 @@ export default class DataTelecom extends BaseCommand {
           lte_bands: '',
           lte_protocols: '',
         }
-        for (let index = 0; index <= data.length; index++) {
+        for (let index = 1; index <= data.length; index++) {
           if (await Telecom.findBy('carrier_link', data[index])) continue
-          const $ = cheerio.load((await getCarrier(index)).data)
-          rowData.carrier_link = data[index]
+          const $ = cheerio.load((await getCarrier(data[index])).data)
           const rows = $('table tbody tr')
-          rows.each((index, row) => {
+          const coverageLink = $(rows).find('td a:contains("Check AWCC Coverage")').attr('href')
+          rowData.carrier_link = data[index]
+          rowData.coverage_map = coverageLink
+          rows.each((i, row) => {
             const tds = $(row).find('td')
-            const coverageLink = $(row).find('td a:contains("Check AWCC Coverage")').attr('href')
             tds.each((_, td) => {
               const text = $(td).text().trim()
-              switch (index) {
-                case 0:
-                  rowData.name = text
-                  break
-                case 1:
-                  rowData.company = text
-                  break
-                case 2:
-                  rowData.company = text
-                  break
-                case 3:
-                  rowData.country = text
-                  break
-                case 4:
-                  rowData.country_code = text
-                  break
-                case 5:
-                  rowData.carrier_webiste = text
-                  break
-                case 6:
-                  rowData.carrier_codes = text
-                  break
-                case 7:
-                  rowData.mobile_prefix = text
-                  break
-                case 8:
-                  rowData.size_of_nsn = text
-                  break
-                case 9:
-                  rowData.number_format = text
-                  break
-                case 10:
-                  rowData.coverage_map = coverageLink
-                  break
-                case 11:
-                  rowData.subscribers = text
-                  break
-                case 12:
-                  rowData.gsm_bands = text
-                  break
-                case 13:
-                  rowData.gsm_protocols = text
-                  break
-                case 14:
-                  rowData.umts_bands = text
-                  break
-                case 15:
-                  rowData.umts_protocols = text
-                  break
-                case 16:
-                  rowData.lte_bands = text
-                  break
-                case 17:
-                  rowData.lte_protocols = text
-                  break
-                default:
-                  break
-              }
+              updateRowData(rowData, i, text)
             })
           })
           await Telecom.create(rowData)
@@ -147,12 +162,12 @@ export default class DataTelecom extends BaseCommand {
             if (err) throw err
           })
         }
-        const $ = cheerio.load((await getCarrier()).data)
+        const $ = cheerio.load((await getCarriersPage()).data)
         const pageNumber = parseInt(
           $('.pager').first().children('li').children('a').last().attr('href').replace(/\D/g, '')
         )
         for (let index = 1; index <= pageNumber; index++) {
-          const request = getCarrier(index)
+          const request = getCarriersPage(index)
           const $ = cheerio.load((await request).data)
           $('table tbody tr').each((_, tr) => {
             const link = `https://www.imei.info${$(tr)

@@ -18,6 +18,9 @@ export default class Telecom extends BaseModel {
   public country: string
 
   @column()
+  public country_iso: string
+
+  @column()
   public country_code: string
 
   @column()

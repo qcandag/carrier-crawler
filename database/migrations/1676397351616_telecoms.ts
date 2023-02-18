@@ -11,6 +11,7 @@ export default class extends BaseSchema {
       table.string('name')
       table.string('company')
       table.string('country')
+      table.string('country_iso')
       table.string('country_code')
       table.string('carrier_webiste')
       table.string('carrier_codes')
