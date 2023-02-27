@@ -27,19 +27,28 @@ export default class Telecom extends BaseModel {
   public carrier_website: string
 
   @column()
-  public carrier_codes: string
+  public carrier_codes: [string]
 
   @column()
-  public mobile_prefix: string
+  public mvno: string
+
+  @column()
+  public mobile_prefix: [string]
+
+  @column()
+  public mobile_prefix_comment: string
 
   @column()
   public size_of_nsn: string
 
   @column()
-  public number_format: string
+  public number_format: [string]
 
   @column()
   public coverage_map: string
+
+  @column()
+  public comment: string
 
   @column()
   public subscribers: string
@@ -61,6 +70,9 @@ export default class Telecom extends BaseModel {
 
   @column()
   public lte_protocols: string
+
+  @column()
+  public cdma_bands: string
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime

@@ -4,13 +4,12 @@ var cheerio = require('cheerio')
 var path = require('path')
 import fs from 'fs'
 import getDateDiffrence from '../app/utils/command-utils/getDateDiffrence'
+import { toSnakeCase } from 'js-string-helper'
+import { closest } from 'fastest-levenshtein'
 
 export default class DataTelecom extends BaseCommand {
   public static commandName = 'data:telecom'
 
-  /**
-   * Command description is displayed in the "help" output
-   */
   public static description = 'Get telecom providers data.'
 
   public static settings = {
@@ -59,62 +58,11 @@ export default class DataTelecom extends BaseCommand {
         })
         return request
       }
-      const updateRowData = (rowData, i, text) => {
-        switch (i) {
-          case 0:
-            rowData.name = text
-            break
-          case 1:
-            rowData.company = text
-            break
-          case 2:
-            rowData.country = text
-            break
-          case 3:
-            rowData.country_iso = text
-            break
-          case 4:
-            rowData.country_code = text
-            break
-          case 5:
-            rowData.carrier_website = text
-            break
-          case 6:
-            rowData.carrier_codes = text
-            break
-          case 7:
-            rowData.mobile_prefix = text
-            break
-          case 8:
-            rowData.size_of_nsn = text
-            break
-          case 9:
-            rowData.number_format = text
-            break
-          case 11:
-            rowData.subscribers = text
-            break
-          case 12:
-            rowData.gsm_bands = text
-            break
-          case 13:
-            rowData.gsm_protocols = text
-            break
-          case 14:
-            rowData.umts_bands = text
-            break
-          case 15:
-            rowData.umts_protocols = text
-            break
-          case 16:
-            rowData.lte_bands = text
-            break
-          case 17:
-            rowData.lte_protocols = text
-            break
-          default:
-            break
+      const updateRowData = (rowData, rowDataKey, rowDataValue) => {
+        if (rowDataKey === 'mobile_prefix' || rowDataKey === 'carrier_codes') {
+          rowDataValue = rowDataValue.split(/[\s,]+/)
         }
+        rowData[rowDataKey] = rowDataValue
       }
 
       const withFileFunction = async (filePath, Telecom) => {
@@ -128,10 +76,13 @@ export default class DataTelecom extends BaseCommand {
           country_code: '',
           carrier_website: '',
           carrier_codes: '',
+          mvno: '',
           mobile_prefix: '',
+          mobile_prefix_comment: '',
           size_of_nsn: '',
           number_format: '',
           coverage_map: '',
+          comment: '',
           subscribers: '',
           gsm_bands: '',
           gsm_protocols: '',
@@ -139,24 +90,33 @@ export default class DataTelecom extends BaseCommand {
           umts_protocols: '',
           lte_bands: '',
           lte_protocols: '',
+          cdma_bands: '',
         }
         for (let index = 1; index <= data.length; index++) {
           if (await Telecom.findBy('carrier_link', data[index])) continue
           const $ = cheerio.load((await getCarrier(data[index])).data)
           const rows = $('table tbody tr')
-          const coverageLink = $(rows).find('td a:contains("Check AWCC Coverage")').attr('href')
+          const coverageLink = $(rows).find('td a:contains("Coverage")').attr('href')
+          rows.each((i, row) => {
+            const th = $(row).find('th')
+            const td = $(th).next()
+            const objectKey = closest(toSnakeCase(th.text().toLowerCase()), Object.keys(rowData))
+            if ($(td).find('p').length && objectKey === 'number_format') {
+              const objectValue = $(td)
+                .find('p')
+                .map((i, el) => $(el).text())
+                .get()
+              rowData[objectKey] = objectValue
+              return
+            }
+            updateRowData(rowData, objectKey, td.text().trim())
+          })
           rowData.carrier_link = data[index]
           rowData.coverage_map = coverageLink
-          rows.each((i, row) => {
-            const tds = $(row).find('td')
-            tds.each((_, td) => {
-              const text = $(td).text().trim()
-              updateRowData(rowData, i, text)
-            })
-          })
           await Telecom.create(rowData)
         }
       }
+
       const withoutFileFunction = async (filePath: any) => {
         if (getDateDiffrence() > 2) {
           fs.unlink(filePath, (err) => {

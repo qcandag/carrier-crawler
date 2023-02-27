@@ -14,11 +14,14 @@ export default class extends BaseSchema {
       table.string('country_iso')
       table.string('country_code')
       table.string('carrier_website')
-      table.string('carrier_codes')
-      table.string('mobile_prefix')
+      table.specificType('carrier_codes', 'text[]')
+      table.string('mvno')
+      table.specificType('mobile_prefix', 'text[]')
+      table.string('mobile_prefix_comment')
       table.string('size_of_nsn')
-      table.string('number_format')
+      table.specificType('number_format', 'text[]')
       table.string('coverage_map')
+      table.string('comment')
       table.string('subscribers')
       table.string('gsm_bands')
       table.string('gsm_protocols')
@@ -26,6 +29,7 @@ export default class extends BaseSchema {
       table.string('umts_protocols')
       table.string('lte_bands')
       table.string('lte_protocols')
+      table.string('cdma_bands')
       /**
        * Uses timestamptz for PostgreSQL and DATETIME2 for MSSQL
        */
