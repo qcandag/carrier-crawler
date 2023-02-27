@@ -58,6 +58,8 @@
     "@adonisjs/lucid": "^18.3.0",
     "axios": "^1.3.3",
     "cheerio": "^1.0.0-rc.12",
+    "fastest-levenshtein": "^1.0.16",
+    "js-string-helper": "^0.1.3",
     "luxon": "^3.2.1",
     "proxy-addr": "^2.0.7",
     "reflect-metadata": "^0.1.13",
