@@ -15,7 +15,7 @@ https://github.com/qcandag/carrier-crawler.git
 Move into project
 
 ```bash
-cd carrier--crawler
+cd carrier-crawler
 ```
 
 Install packages
@@ -29,7 +29,7 @@ npm install
 ```javascript
 node ace migration:run
 
-# run the command -> Careats links.txt file if doesnt exist if it is starts crawling
+# run the command -> Creates links.txt file if doesnt exist if it is starts crawling
 node ace data:telecom
 
 ```
