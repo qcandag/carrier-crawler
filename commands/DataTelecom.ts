@@ -95,10 +95,12 @@ export default class DataTelecom extends BaseCommand {
         }
         for (let index = 1; index <= data.length; index++) {
           if (await Telecom.findBy('carrier_link', data[index])) continue
-          logFile(
-            'carrier_requests',
-            `Sent Date: ${new Date(new Date().toDateString())}\nUrl: ${data[index]} \n\n`
-          )
+          // logFile(
+          //   'carrier_requests',
+          //   `Sent Date: ${new Date(new Date().toDateString())}\nUrl: ${data[index]} \n\n`
+          // )
+          this.logger.info(`Sent Date: ${new Date(new Date().toDateString())} Url: ${data[index]}`)
+
           const $ = cheerio.load((await getCarrier(data[index])).data)
           const rows = $('table tbody tr')
           const coverageLink = $(rows).find('td a:contains("Coverage")').attr('href')

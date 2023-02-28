@@ -82,7 +82,6 @@ export default class Telecom extends BaseModel {
 
   @beforeCreate()
   public static convertToJson(telecom: Telecom) {
-    console.log(telecom.number_format)
     telecom.number_format = JSON.stringify(telecom.number_format)
     telecom.mobile_prefix = JSON.stringify(telecom.mobile_prefix)
     telecom.carrier_codes = JSON.stringify(telecom.carrier_codes)
