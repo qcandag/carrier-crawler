@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon'
-import { BaseModel, column } from '@ioc:Adonis/Lucid/Orm'
+import { BaseModel, column, beforeCreate } from '@ioc:Adonis/Lucid/Orm'
 
 export default class Telecom extends BaseModel {
   @column({ isPrimary: true })
@@ -27,13 +27,13 @@ export default class Telecom extends BaseModel {
   public carrier_website: string
 
   @column()
-  public carrier_codes: [string]
+  public carrier_codes: string
 
   @column()
   public mvno: string
 
   @column()
-  public mobile_prefix: [string]
+  public mobile_prefix: string
 
   @column()
   public mobile_prefix_comment: string
@@ -42,7 +42,7 @@ export default class Telecom extends BaseModel {
   public size_of_nsn: string
 
   @column()
-  public number_format: [string]
+  public number_format: string
 
   @column()
   public coverage_map: string
@@ -79,4 +79,22 @@ export default class Telecom extends BaseModel {
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   public updatedAt: DateTime
+
+  @beforeCreate()
+  public static convertToJson(telecom: Telecom) {
+    telecom.number_format = JSON.stringify(telecom.number_format)
+    telecom.mobile_prefix = JSON.stringify(telecom.mobile_prefix)
+    telecom.carrier_codes = JSON.stringify(telecom.carrier_codes)
+
+    telecom.gsm_bands = JSON.stringify(telecom.gsm_bands)
+    telecom.gsm_protocols = JSON.stringify(telecom.gsm_protocols)
+
+    telecom.umts_protocols = JSON.stringify(telecom.umts_protocols)
+    telecom.umts_bands = JSON.stringify(telecom.umts_bands)
+
+    if (telecom.lte_bands !== '' && telecom.lte_protocols !== '') {
+      telecom.lte_protocols = JSON.stringify(telecom.lte_protocols)
+      telecom.lte_bands = JSON.stringify(telecom.lte_bands)
+    }
+  }
 }
