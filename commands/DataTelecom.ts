@@ -4,6 +4,7 @@ var cheerio = require('cheerio')
 var path = require('path')
 import fs from 'fs'
 import getDateDiffrence from '../app/utils/command-utils/getDateDiffrence'
+import { logFile } from 'App/utils/command-utils/logs'
 import { toSnakeCase } from 'js-string-helper'
 import { closest } from 'fastest-levenshtein'
 
@@ -94,6 +95,10 @@ export default class DataTelecom extends BaseCommand {
         }
         for (let index = 1; index <= data.length; index++) {
           if (await Telecom.findBy('carrier_link', data[index])) continue
+          logFile(
+            'carrier_requests',
+            `Sent Date: ${new Date(new Date().toDateString())}\nUrl: ${data[index]} \n\n`
+          )
           const $ = cheerio.load((await getCarrier(data[index])).data)
           const rows = $('table tbody tr')
           const coverageLink = $(rows).find('td a:contains("Coverage")').attr('href')
