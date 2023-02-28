@@ -122,7 +122,6 @@ export default class DataTelecom extends BaseCommand {
                 .find('ul li')
                 .map((i, el) => $(el).text())
                 .get()
-              console.log(objectKey + ' :' + objectValue)
               updateRowData(rowData, objectKey, objectValue)
               return
             }
