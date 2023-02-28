@@ -23,12 +23,12 @@ export default class extends BaseSchema {
       table.string('coverage_map')
       table.string('comment')
       table.string('subscribers')
-      table.string('gsm_bands')
-      table.string('gsm_protocols')
-      table.string('umts_bands')
-      table.string('umts_protocols')
-      table.string('lte_bands')
-      table.string('lte_protocols')
+      table.json('gsm_bands')
+      table.json('gsm_protocols')
+      table.json('umts_bands')
+      table.json('umts_protocols')
+      table.json('lte_bands')
+      table.json('lte_protocols')
       table.string('cdma_bands')
       /**
        * Uses timestamptz for PostgreSQL and DATETIME2 for MSSQL

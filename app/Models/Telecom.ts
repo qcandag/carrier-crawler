@@ -85,5 +85,16 @@ export default class Telecom extends BaseModel {
     telecom.number_format = JSON.stringify(telecom.number_format)
     telecom.mobile_prefix = JSON.stringify(telecom.mobile_prefix)
     telecom.carrier_codes = JSON.stringify(telecom.carrier_codes)
+
+    telecom.gsm_bands = JSON.stringify(telecom.gsm_bands)
+    telecom.gsm_protocols = JSON.stringify(telecom.gsm_protocols)
+
+    telecom.umts_protocols = JSON.stringify(telecom.umts_protocols)
+    telecom.umts_bands = JSON.stringify(telecom.umts_bands)
+
+    if (telecom.lte_bands !== '' && telecom.lte_protocols !== '') {
+      telecom.lte_protocols = JSON.stringify(telecom.lte_protocols)
+      telecom.lte_bands = JSON.stringify(telecom.lte_bands)
+    }
   }
 }
