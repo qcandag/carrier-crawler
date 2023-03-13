@@ -5,7 +5,7 @@
         "loadApp": true,
         "stayAlive": false
       },
-      "commandPath": "./commands/DataTelecom",
+      "commandPath": "./commands/TelecomData/DataTelecom",
       "commandName": "data:telecom",
       "description": "Get telecom providers data.",
       "args": [],
