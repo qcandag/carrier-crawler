@@ -14,7 +14,11 @@ const updateRowData = (rowData, rowDataKey, rowDataValue) => {
   }
   rowData[rowDataKey] = rowDataValue
 }
-const transformer = async  (objectKeys: Array<any>, objectValues: Array<any>, $): Promise<TransformerReturn> => {
+const transformer = async (
+  objectKeys: Array<any>,
+  objectValues: Array<any>,
+  $
+): Promise<TransformerReturn> => {
   try {
     const rowData = {
       carrier_link: '',

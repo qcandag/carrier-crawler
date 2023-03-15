@@ -4,7 +4,6 @@ var path = require('path')
 import fs from 'fs'
 import getDateDiffrence from '../../app/utils/command-utils/getDateDiffrence'
 
-
 import { scraper } from './workers/scraper'
 import { writer } from './workers/writer'
 

@@ -41,11 +41,10 @@ const scraper = async (isFile: boolean, filePath: string): Promise<ScraperReturn
   try {
     if (isFile) {
       Logger.info('Scraping telecoms...')
-      const objectKeys = []
-      const objectValues = []
-
       const data = fs.readFileSync(filePath, { encoding: 'utf8', flag: 'r' }).split('\n')
       for (let index = 0; index < data.length; index++) {
+        const objectKeys = []
+        const objectValues = []
         if (await Telecom.findBy('carrier_link', data[index])) continue
         const $ = cheerio.load((await getCarrier(data[index])).data)
         const rows = $('table tbody tr')
@@ -62,12 +61,13 @@ const scraper = async (isFile: boolean, filePath: string): Promise<ScraperReturn
         Logger.info(`Sent Date: ${new Date(new Date().toDateString())} Url: ${data[index]}`)
         const transformReturn = await transformer(objectKeys, objectValues, $)
         if (transformReturn.success === false) throw new Error(transformReturn.message)
+        continue
       }
       return {
         success: true,
         message: 'Scraping ended successfully.',
       }
-    } else {      
+    } else {
       Logger.info("Scraping telecom page's...")
       if (getDateDiffrence() > 2) {
         fs.unlink(filePath, (err) => {
