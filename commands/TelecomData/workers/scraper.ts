@@ -84,8 +84,7 @@ const scraper = async (isFile: boolean, filePath: string): Promise<ScraperReturn
         const $ = cheerio.load((await request).data)
         $('table tbody tr').each((_, tr) => {
           const link = `https://www.imei.info${$(tr)
-            .children('td')
-            .first()
+            .children('td:nth-child(2)')
             .children('a')
             .attr('href')}`
           //@ts-ignore
